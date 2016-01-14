@@ -10,10 +10,10 @@ rm(list = ls())  # Clear the workspace!
 ls() ## no objects left in the workspace
 
 # Installing/updating packages (for the R Markdown)
-#install.packages(c("knitr", "yaml", "htmltools", "caTools", "bitops", "rmarkdown"))
+install.packages(c("knitr", "yaml", "htmltools", "caTools", "bitops", "rmarkdown"))
 
 # Installing/updating packages (for the R Markdown publish)
-#install.packages(c("RCurl", "PKI", "packrat", "rstudioapi"))
+install.packages(c("RCurl", "PKI", "packrat", "rstudioapi"))
 
 # The rsconnect package might be installed after being asked.
 # It will create a new folder: rsconnect
@@ -35,8 +35,8 @@ library(packrat)
 library(rstudioapi)
 #library(rsconnect)
 
-# Open the web page of my created Document Report
-shell.exec("http://rpubs.com/wschuc002/143014")
+# Open the web page of my created Document Report #Windows only)
+#shell.exec("http://rpubs.com/wschuc002/143014")
 
 # referring to functions in R folder
 #source("./R/Preprocessing.R")
@@ -68,3 +68,24 @@ par(mfrow = c(1, 1)) # reset plotting window
 hist(gewata, xlim = c(0, 5000), ylim = c(0, 750000), breaks = seq(0, 5000, by = 100))
 
 pairs(gewata)
+
+ndvi <- overlay(GewataB4, GewataB3, fun=function(x,y){(x-y)/(x+y)})
+plot(ndvi)
+
+# load the data and check it out
+# @ can we show a bit more about this data set - where does it come from
+# @ can we provide an option to download it themselve for any location?
+load("data/vcfGewata.rda")
+vcfGewata
+plot(vcfGewata)
+hist(vcfGewata)
+
+vcfGewata[vcfGewata > 100] <- NA
+plot(vcfGewata)
+summary(vcfGewata)
+hist(vcfGewata)
+
+gewata <- calc(gewata, fun=function(x) x / 10000)
+# make a new raster brick of covariates by adding NDVI and VCF layers
+covs <- addLayer(gewata, ndvi, vcfGewata)
+plot(covs)
